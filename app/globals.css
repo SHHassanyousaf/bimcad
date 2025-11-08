@@ -289,3 +289,8 @@ button[class*="chevron"]:hover {
   background-color: rgba(255, 255, 255, 0.5) !important;
   transform: scale(1.1);
 }
+a[href*="v0.app"][target="_blank"][rel*="noopener"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
