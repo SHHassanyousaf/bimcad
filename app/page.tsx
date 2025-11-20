@@ -2,19 +2,42 @@
 
 import Header from "@/components/header"
 import Footer from "@/components/footer"
-import Link from "next/link"
 import Image from "next/image"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { AnimatedSection } from "@/components/AnimatedSection"
+import HeroParticles from "@/components/HeroParticles"
+import ClientScroller from "@/components/ClientScroller"
+import "@/styles/scroller.css"
+
+// Enable scroll parallax on mount (if you have the hook)
+import { useScrollParallax } from "@/hooks/useScrollParallax"
+function ScrollParallaxLoader() {
+  useScrollParallax?.()
+  return null
+}
 
 export default function Home() {
-  const [currentSlide, setCurrentSlide] = useState(0)
-
   const heroImages = [
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/8.1%20Housing%20Projects-Mx1k1bsK3gVA8JX8vCSKv62oMbvR03.jpg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/4.1%20TIS%20Projects-I0eCBSAik05MvMU5HBOTRW0Cc8mP0n.jpg",
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/6.2%20Pre-Cast%20Projects-nIq7Uf2GuIOe5rNV6XsenyIsZ1HoNh.jpg",
+    "/images/5.4 Landscape Projects.avif",
+    "/images/6.2 Pre-Cast Projects.jpg",
+    "/images/3.1 Infrastructure Projects.jpg",
+    "/images/1.4 Cycle Track Project.jpeg",
+    "/images/2.2 Roads Highways Projects.avif",
   ]
+
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [paused, setPaused] = useState(false)
+
+  // Auto-rotate images every 2 seconds (pauses on interaction)
+  useEffect(() => {
+    if (paused) return
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroImages.length)
+    }, 2000)
+
+    return () => clearInterval(interval)
+  }, [paused, heroImages.length])
 
   const services = [
     { title: "Infrastructure Projects", icon: "🏗️" },
@@ -33,42 +56,38 @@ export default function Home() {
   ]
 
   const clients = [
-    "CDM Smith Inc.",
-    "Vision Nine Consultancy (VNC)",
-    "Al Turath Engineering Consultants",
-    "Khatib & Al Alami",
-    "Finite Engineering Pvt. Ltd",
+    { name: "Al Turath Engineering Consultants", logo: "/Clients/Al Turath.png" },
+    { name: "CDM Smith Inc.", logo: "/Clients/CMD smith.png" },
+    { name: "Finite Engineering Consultants", logo: "/Clients/Finite Engineering.png" },
+    { name: "Khatib & Al Alami", logo: "/Clients/Khatib Al Alami.png" },
+    { name: "VNC Engineering Consultants", logo: "/Clients/VNC Engineering Consultants.jpg" },
   ]
 
   const featuredProjects = [
-    {
-      image:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/4.1%20TIS%20Projects-I0eCBSAik05MvMU5HBOTRW0Cc8mP0n.jpg",
-      title: "TIS Projects",
-    },
-    {
-      image:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/6.2%20Pre-Cast%20Projects-nIq7Uf2GuIOe5rNV6XsenyIsZ1HoNh.jpg",
-      title: "Pre-Cast Projects",
-    },
-    {
-      image:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/8.1%20Housing%20Projects-Mx1k1bsK3gVA8JX8vCSKv62oMbvR03.jpg",
-      title: "Housing Projects",
-    },
+    { image: "/images/5.4 Landscape Projects.avif", title: "Landscape Projects" },
+    { image: "/images/6.2 Pre-Cast Projects.jpg", title: "Pre-Cast Projects" },
+    { image: "/images/3.1 Infrastructure Projects.jpg", title: "Infrastructure Projects" },
+    { image: "/images/1.4 Cycle Track Project.jpeg", title: "Cycle Track Project" },
+    { image: "/images/2.2 Roads Highways Projects.avif", title: "Roads & Highways Projects" },
   ]
 
   return (
     <>
       <Header />
-      <main className="bg-white">
+      <ScrollParallaxLoader />
+      <HeroParticles />
+      <main className="bg-[#d9d9d9]">
         {/* Hero Section */}
-        <section className="relative h-[500px] md:h-[600px] overflow-hidden">
+        <section
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          className="relative h-[500px] md:h-[600px] overflow-hidden"
+        >
           {heroImages.map((image, index) => (
             <div
               key={index}
               className={`absolute inset-0 transition-opacity duration-1000 ${
-                index === currentSlide ? "opacity-100" : "opacity-0"
+                index === currentSlide ? "opacity-100" : "opacity-0 pointer-events-none"
               }`}
             >
               <Image
@@ -77,135 +96,147 @@ export default function Home() {
                 fill
                 className="object-cover"
                 priority={index === 0}
+                loading={index === 0 ? "eager" : "lazy"}
+                sizes="100vw"
+                quality={index === 0 ? 90 : 75}
               />
               <div className="absolute inset-0 bg-black/40" />
             </div>
           ))}
 
           {/* Hero Content */}
-          <div className="relative h-full flex flex-col justify-center items-center text-center px-6 z-10">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 max-w-2xl">
-              High-Quality CAD & BIM Solutions for Infrastructure Projects
-            </h1>
-            <p className="text-lg md:text-xl text-white/90 mb-8 max-w-xl">
-              Delivering accuracy, coordination, and efficiency from concept to construction
-            </p>
-            <Link href="/services" className="btn-primary">
-              Our Services
-            </Link>
-          </div>
+          <AnimatedSection>
+            <div className="relative h-full flex flex-col justify-center items-center text-center px-6 py-24 md:py-32 z-10">
+              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 max-w-2xl slide-down">
+                High Quality BIM CAD Design Solutions – “Connecting Nodes”
+              </h1>
+
+              <p className="text-lg md:text-xl text-white/90 mb-8 max-w-xl slide-up">
+                Delivering accuracy, coordination, and efficiency from concept to construction
+              </p>
+
+              <a href="/services" className="btn-primary">
+                Our Services
+              </a>
+            </div>
+          </AnimatedSection>
 
           {/* Slider Controls */}
           <button
             onClick={() => setCurrentSlide((prev) => (prev === 0 ? heroImages.length - 1 : prev - 1))}
-            className="absolute left-6 top-1/2 -translate-y-1/2 z-20 bg-white/30 hover:bg-white/50 p-2 rounded text-white transition"
+            className="absolute left-6 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 p-2 rounded text-white transition"
+            aria-label="Previous slide"
           >
             <ChevronLeft size={24} />
           </button>
           <button
             onClick={() => setCurrentSlide((prev) => (prev === heroImages.length - 1 ? 0 : prev + 1))}
-            className="absolute right-6 top-1/2 -translate-y-1/2 z-20 bg-white/30 hover:bg-white/50 p-2 rounded text-white transition"
+            className="absolute right-6 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 p-2 rounded text-white transition"
+            aria-label="Next slide"
           >
             <ChevronRight size={24} />
           </button>
         </section>
 
         {/* Services Overview */}
-        <section className="py-16 md:py-24 px-6 max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#222222] text-center mb-12">What We Offer</h2>
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-            {services.map((service, index) => (
-              <div key={index} className="bg-[#f7f7f7] p-8 rounded text-center hover:shadow-lg transition">
-                <div className="text-4xl mb-4">{service.icon}</div>
-                <h3 className="text-lg font-semibold text-[#222222]">{service.title}</h3>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* About Snippet */}
-        <section className="py-16 md:py-24 px-6 bg-[#f7f7f7]">
-          <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-[#222222] mb-6">About BIMCAD</h2>
-              <p className="text-[#666666] leading-relaxed mb-6">
-                BIMCAD Engineering Partners is a multidisciplinary design and engineering service provider, established
-                in 2019. We specialize in high-quality CAD drafting and Building Information Modeling (BIM) solutions
-                for infrastructure projects. Our team of experienced professionals is dedicated to delivering
-                innovative, accurate, and cost-effective engineering solutions from concept to construction.
-              </p>
-              <Link href="/about" className="btn-primary inline-block">
-                Learn More About Us
-              </Link>
-            </div>
-            <div className="aspect-video bg-gray-300 rounded overflow-hidden">
-              <Image
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/3.4%20Infrastructure%20Projects-O7xwP2WKO7SYJHDARcXhs77Uhlr9dE.jpg"
-                alt="About BIMCAD"
-                width={500}
-                height={300}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* Featured Projects */}
-        <section className="py-16 md:py-24 px-6 max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#222222] text-center mb-12">Featured Projects</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {featuredProjects.map((project, index) => (
-              <div key={index} className="group cursor-pointer overflow-hidden rounded">
-                <div className="relative h-64 overflow-hidden">
-                  <Image
-                    src={project.image || "/placeholder.svg"}
-                    alt={project.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    priority={index === 0}
-                  />
-                </div>
-                <div className="p-6 bg-[#f7f7f7]">
-                  <h3 className="text-lg font-semibold text-[#222222]">{project.title}</h3>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="text-center mt-12">
-            <Link href="/projects" className="btn-secondary">
-              View All Projects
-            </Link>
-          </div>
-        </section>
-
-        {/* Core Values */}
-        <section className="py-16 md:py-24 px-6 bg-[#f7f7f7]">
-          <div className="max-w-7xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#222222] text-center mb-12">Our Core Values</h2>
-            <div className="grid md:grid-cols-5 gap-6">
-              {coreValues.map((value, index) => (
-                <div key={index} className="bg-white p-6 rounded shadow-sm">
-                  <h3 className="text-xl font-bold text-[#222222] mb-2">{value.title}</h3>
-                  <p className="text-[#666666] text-sm">{value.desc}</p>
-                </div>
+        <AnimatedSection>
+          <section className="py-16 md:py-24 px-6 max-w-7xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#222222] text-center mb-12">What We Offer</h2>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+              {services.map((service, index) => (
+                <a href="/projects" key={index}>
+                  <div
+                    className="service-card bg-[#d9d9d9] p-8 rounded hover:shadow-lg transition-all hover:-translate-y-2 text-center"
+                    style={{
+                      animationDelay: `${index * 100}ms`,
+                      animationDuration: "700ms",
+                    }}
+                  >
+                    <div className="text-4xl mb-4">{service.icon}</div>
+                    <h3 className="text-lg font-semibold text-[#222222]">{service.title}</h3>
+                  </div>
+                </a>
               ))}
             </div>
-          </div>
-        </section>
+          </section>
+        </AnimatedSection>
+
+        {/* About Snippet */}
+        <AnimatedSection>
+          <section className="py-16 md:py-24 px-6 bg-[#d9d9d9]">
+            <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+              <div className="text-center md:text-left">
+                <h2 className="text-3xl md:text-4xl font-bold text-[#222222] mb-6">About Vertices Engineering Partners</h2>
+                <p className="text-[#666666] leading-relaxed mb-6">
+                  Vertices Engineering Partners (VEP) is a multidisciplinary design and engineering service provider, established
+                  in 2019. We specialize in high-quality CAD drafting and Building Information Modeling (BIM) solutions
+                  for infrastructure projects.
+                </p>
+                <a href="/about" className="btn-primary inline-block hover:scale-105 transition-transform duration-300">
+                  Learn More About Us
+                </a>
+              </div>
+              <div className="aspect-video bg-[#c4c4c4] rounded overflow-hidden mx-auto md:mx-0">
+                <Image
+                  src="/images/3.1 Infrastructure Projects.jpg"
+                  alt="About Vertices Engineering Partners"
+                  width={500}
+                  height={300}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+            </div>
+          </section>
+        </AnimatedSection>
+
+        {/* Featured Projects */}
+        <AnimatedSection>
+          <section className="py-16 md:py-24 px-6 max-w-7xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#222222] text-center mb-12">Featured Projects</h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              {featuredProjects.map((project, index) => (
+                <ProjectCard key={index} project={project} index={index} />
+              ))}
+            </div>
+            <div className="text-center mt-12">
+              <a href="/projects" className="btn-secondary hover:scale-105 transition-transform duration-300">
+                View All Projects
+              </a>
+            </div>
+          </section>
+        </AnimatedSection>
+
+        {/* Core Values */}
+        <AnimatedSection>
+          <section className="py-16 md:py-24 px-6 bg-[#d9d9d9]">
+            <div className="max-w-7xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold text-[#222222] text-center mb-12">Our Core Values</h2>
+              <div className="grid md:grid-cols-5 gap-6">
+                {coreValues.map((value, index) => (
+                  <ValueCard key={index} value={value} index={index} />
+                ))}
+              </div>
+            </div>
+          </section>
+        </AnimatedSection>
 
         {/* Clients Carousel */}
         <section className="py-16 md:py-24 px-6 max-w-7xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-[#222222] text-center mb-12">Our Valued Clients</h2>
-          <div className="bg-[#f7f7f7] p-8 rounded">
-            <div className="flex flex-wrap justify-center gap-8">
-              {clients.map((client, index) => (
-                <div key={index} className="text-center">
-                  <p className="font-semibold text-[#222222]">{client}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+          <ClientScroller speed="fast">
+            {clients.map((client, index) => (
+              <div key={index} className="flex-shrink-0 w-[220px] mx-4 text-center">
+                <Image
+                  src={client.logo}
+                  alt={client.name}
+                  width={150}
+                  height={75}
+                  className="object-contain mx-auto h-[75px]"
+                />
+                <p className="text-sm text-[#666666] mt-2">{client.name}</p>
+              </div>
+            ))}
+          </ClientScroller>
         </section>
 
         {/* CTA Section */}
@@ -214,16 +245,59 @@ export default function Home() {
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
               Your Trusted Global Partner in Digital Design
             </h2>
-            <Link
+            <a
               href="/contact"
-              className="px-8 py-3 bg-white text-[#222222] font-semibold rounded hover:bg-gray-100 transition inline-block"
+              className="px-8 py-3 bg-card text-foreground font-semibold rounded hover:shadow-lg transition inline-block"
             >
               Contact Us Today
-            </Link>
+            </a>
           </div>
         </section>
       </main>
       <Footer />
     </>
+  )
+}
+
+// Small helper components placed at bottom to avoid extra imports
+function ProjectCardImage({ src, alt, index }: { src: string; alt: string; index: number }) {
+  return (
+    <div className="relative h-64 overflow-hidden">
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        className="object-cover group-hover:scale-110 transition-transform duration-500"
+        priority={index === 0}
+        loading={index === 0 ? "eager" : "lazy"}
+        quality={index === 0 ? 85 : 72}
+        style={{ willChange: "transform" }}
+      />
+    </div>
+  )
+}
+
+function ProjectCard({ project, index }: { project: { image: string; title: string }; index: number }) {
+  return (
+    <div
+      key={index}
+      className="group cursor-pointer overflow-hidden rounded"
+      style={{ animationDelay: `${index * 150}ms`, animationDuration: "700ms" }}
+    >
+      <ProjectCardImage src={project.image} alt={project.title} index={index} />
+      <div className="p-6 bg-[#d9d9d9] group-hover:bg-[#c4c4c4] transition-colors duration-300">
+        <h3 className="text-lg font-semibold text-[#222222]">{project.title}</h3>
+      </div>
+    </div>
+  )
+}
+
+function ValueCard({ value, index }: { value: { title: string; desc: string }; index: number }) {
+  return (
+    <div className="value-card bg-card p-6 rounded shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all" style={{ animationDelay: `${index * 100}ms`, animationDuration: "700ms" }}>
+      <h3 className="text-xl font-bold text-[#222222] mb-2">{value.title}</h3>
+      <p className="text-[#666666] text-sm">{value.desc}</p>
+    </div>
   )
 }

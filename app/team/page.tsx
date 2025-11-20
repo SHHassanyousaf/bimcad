@@ -2,12 +2,14 @@
 
 import Header from "@/components/header"
 import Footer from "@/components/footer"
+import { AnimatedSection } from "@/components/AnimatedSection"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 
 export default function Team() {
   const teamMembers = [
     {
       name: "Sheikh Muhammad Asif",
-      position: "Director",
+      position: "Team Lead",
     },
     {
       name: "Zafar Iqbal",
@@ -29,12 +31,16 @@ export default function Team() {
       name: "Sajid Ali",
       position: "BIM Modeler/CAD",
     },
+    {
+      name: "Sheikh Muhammad Hassan",
+      position: "IT & Web Development Specialist",
+    },
   ]
 
   return (
     <>
       <Header />
-      <main className="bg-white">
+      <main className="bg-[#d9d9d9]">
         {/* Hero Section */}
         <section className="py-16 md:py-24 px-6 bg-[#f7f7f7]">
           <div className="max-w-7xl mx-auto text-center">
@@ -46,17 +52,22 @@ export default function Team() {
         </section>
 
         {/* Team Grid */}
-        <section className="py-16 md:py-24 px-6 max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8">
-            {teamMembers.map((member, index) => (
-              <div key={index} className="bg-[#f7f7f7] p-8 rounded text-center hover:shadow-lg transition">
-                <div className="w-24 h-24 bg-gray-300 rounded-full mx-auto mb-6" />
-                <h3 className="text-xl font-bold text-[#222222] mb-2">{member.name}</h3>
-                <p className="text-[#666666] font-medium">{member.position}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        <AnimatedSection>
+          <section className="py-16 md:py-24 px-6 max-w-7xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-8">
+              {teamMembers.map((member, index) => (
+                <div key={index} className="bg-[#f7f7f7] p-8 rounded text-center hover:shadow-lg transition">
+                  <Avatar className="w-24 h-24 mx-auto mb-6">
+                    <AvatarImage src="/images/Avatar.jpg" alt={member.name} />
+                    <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                  </Avatar>
+                  <h3 className="text-xl font-bold text-[#222222] mb-2">{member.name}</h3>
+                  <p className="text-[#666666] font-medium">{member.position}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </AnimatedSection>
       </main>
       <Footer />
     </>
