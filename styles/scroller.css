@@ -1,4 +1,5 @@
 .scrolling-container {
+  position: relative;
   max-width: 100%;
   overflow: hidden;
   -webkit-mask: linear-gradient(
@@ -18,10 +19,18 @@
   gap: 2rem;
 }
 
+.items {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
 .scrolling-container[data-animated="true"] .scrolling-wrapper {
-  width: max-content;
-  flex-wrap: nowrap;
   animation: scroll var(--_animation-duration, 40s) linear infinite;
+}
+
+.scrolling-container[data-animated="true"]:hover .scrolling-wrapper {
+  animation-play-state: paused;
 }
 
 @keyframes scroll {

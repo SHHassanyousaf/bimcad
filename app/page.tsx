@@ -4,13 +4,16 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import Image from "next/image"
 import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { AnimatedSection } from "@/components/AnimatedSection"
 import HeroParticles from "@/components/HeroParticles"
 import ClientScroller from "@/components/ClientScroller"
+import { Card, CardContent } from "@/components/ui/card"
 import "@/styles/scroller.css"
 
 // Enable scroll parallax on mount (if you have the hook)
+import AnimatedHeroText from "@/components/AnimatedHeroText"
 import { useScrollParallax } from "@/hooks/useScrollParallax"
 function ScrollParallaxLoader() {
   useScrollParallax?.()
@@ -29,12 +32,12 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [paused, setPaused] = useState(false)
 
-  // Auto-rotate images every 2 seconds (pauses on interaction)
+  // Auto-rotate images every 5 seconds (pauses on interaction)
   useEffect(() => {
     if (paused) return
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroImages.length)
-    }, 2000)
+    }, 5000)
 
     return () => clearInterval(interval)
   }, [paused, heroImages.length])
@@ -105,21 +108,15 @@ export default function Home() {
           ))}
 
           {/* Hero Content */}
-          <AnimatedSection>
-            <div className="relative h-full flex flex-col justify-center items-center text-center px-6 py-24 md:py-32 z-10">
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 max-w-2xl slide-down">
-                High Quality BIM CAD Design Solutions – “Connecting Nodes”
-              </h1>
+          <div className="relative h-full flex flex-col justify-center items-center text-center px-6 py-24 md:py-32 z-10">
+            <AnimatedHeroText />
 
-              <p className="text-lg md:text-xl text-white/90 mb-8 max-w-xl slide-up">
-                Delivering accuracy, coordination, and efficiency from concept to construction
-              </p>
-
+            <div className="mt-8">
               <a href="/services" className="btn-primary">
                 Our Services
               </a>
             </div>
-          </AnimatedSection>
+          </div>
 
           {/* Slider Controls */}
           <button
@@ -146,7 +143,7 @@ export default function Home() {
               {services.map((service, index) => (
                 <a href="/projects" key={index}>
                   <div
-                    className="service-card bg-[#d9d9d9] p-8 rounded hover:shadow-lg transition-all hover:-translate-y-2 text-center"
+                    className="service-card bg-[#d9d9d9] p-8 rounded hover:shadow-lg transition-all hover:-translate-y-2 text-center h-full flex flex-col"
                     style={{
                       animationDelay: `${index * 100}ms`,
                       animationDuration: "700ms",
@@ -221,38 +218,46 @@ export default function Home() {
         </AnimatedSection>
 
         {/* Clients Carousel */}
-        <section className="py-16 md:py-24 px-6 max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#222222] text-center mb-12">Our Valued Clients</h2>
-          <ClientScroller speed="fast">
-            {clients.map((client, index) => (
-              <div key={index} className="flex-shrink-0 w-[220px] mx-4 text-center">
-                <Image
-                  src={client.logo}
-                  alt={client.name}
-                  width={150}
-                  height={75}
-                  className="object-contain mx-auto h-[75px]"
-                />
-                <p className="text-sm text-[#666666] mt-2">{client.name}</p>
-              </div>
-            ))}
-          </ClientScroller>
-        </section>
+        <AnimatedSection>
+          <section className="py-16 md:py-24 px-6 max-w-7xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#222222] text-center mb-12">Our Valued Clients</h2>
+            <ClientScroller speed="slow">
+              {clients.map((client, index) => (
+                <Card key={index} className="w-[250px] shrink-0">
+                  <CardContent className="flex flex-col items-center justify-center p-6">
+                    <div className="flex justify-center items-center h-[100px] w-full mb-4">
+                      <Image
+                        src={client.logo}
+                        alt={client.name}
+                        width={150}
+                        height={75}
+                        className="object-contain max-h-full max-w-full"
+                      />
+                    </div>
+                    <p className="text-sm font-medium text-center">{client.name}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </ClientScroller>
+          </section>
+        </AnimatedSection>
 
         {/* CTA Section */}
-        <section className="py-16 md:py-24 px-6 bg-[#222222]">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Your Trusted Global Partner in Digital Design
-            </h2>
-            <a
-              href="/contact"
-              className="px-8 py-3 bg-card text-foreground font-semibold rounded hover:shadow-lg transition inline-block"
-            >
-              Contact Us Today
-            </a>
-          </div>
-        </section>
+        <AnimatedSection>
+          <section className="py-16 md:py-24 px-6 bg-[#222222]">
+            <div className="max-w-4xl mx-auto text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+                Your Trusted Global Partner in Digital Design
+              </h2>
+              <a
+                href="/contact"
+                className="px-8 py-3 bg-card text-foreground font-semibold rounded hover:shadow-lg transition inline-block"
+              >
+                Contact Us Today
+              </a>
+            </div>
+          </section>
+        </AnimatedSection>
       </main>
       <Footer />
     </>

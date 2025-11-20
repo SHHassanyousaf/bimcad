@@ -36,28 +36,18 @@ export default function ClientScroller({
   // Duplicate items to enable seamless looping
   return (
     <div
-      className={`scrolling-container overflow-hidden relative w-full ${className}`}
+      className={`scrolling-container ${className}`}
       style={{ "--_animation-duration": duration } as React.CSSProperties}
       data-animated="true"
       role="region"
       aria-label={ariaLabel}
     >
       <div className="scrolling-wrapper">
-        <div className="items flex gap-6 flex-shrink-0">
-          {items.map((child, i) => (
-            <div key={`item-a-${i}`} className="flex-shrink-0">
-              {child}
-            </div>
-          ))}
-        </div>
+        <div className="items">{items}</div>
 
         {/* duplicate copy for seamless loop */}
-        <div aria-hidden className="items flex gap-6 flex-shrink-0">
-          {items.map((child, i) => (
-            <div key={`item-b-${i}`} className="flex-shrink-0">
-              {child}
-            </div>
-          ))}
+        <div aria-hidden="true" className="items">
+          {items}
         </div>
       </div>
     </div>
